@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webinars Online · Tiendanube Partner Program</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300&family=Cormorant+Garamond:ital,wght@1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ─── TOKENS ─────────────────────────────────────── */
+    :root {
+      --blue:      #0050c3;
+      --blue-mid:  #00298f;
+      --ink:       #010b23;
+      --white:     #ffffff;
+      --fg-dim:    rgba(255,255,255,0.55);
+      --fg-subtle: rgba(255,255,255,0.28);
+      --border:    rgba(255,255,255,0.09);
+      --pad-x: clamp(1.5rem, 6vw, 5.5rem);
+      --header-h: 68px;
+      --ease: cubic-bezier(.4,0,.2,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      background: var(--ink);
+      color: var(--white);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .serif {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 300;
+      font-style: italic;
+      letter-spacing: -0.01em;
+    }
+
+    /* ─── HEADER ────────────────────────────────────── */
+    .header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--header-h);
+      z-index: 300;
+      background: rgba(1,11,35,0.90);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 var(--pad-x);
+      gap: 1rem;
+    }
+
+    .logo {
+      display: flex; align-items: center;
+      text-decoration: none; flex-shrink: 0;
+    }
+    .logo__img { height: 32px; width: auto; display: block; }
+
+    .header__spacer { flex: 1; }
+
+    .back-link {
+      font-size: 12px; font-weight: 600; color: rgba(255,255,255,.45);
+      text-decoration: none; padding: 6px 12px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.1);
+      transition: color .15s, background .15s, border-color .15s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .back-link:hover { color: #fff; background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.2); }
+    .back-link::before { content: '←'; }
+
+    .header__badge {
+      font-size: 10px; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase;
+      background: rgba(0,80,195,.25);
+      border: 1px solid rgba(0,80,195,.4);
+      color: rgba(110,175,255,.9);
+      padding: 4px 10px; border-radius: 100px;
+    }
+
+    /* ─── HERO ──────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: calc(var(--header-h) + 5rem) var(--pad-x) clamp(3rem,6vh,5rem);
+      background:
+        radial-gradient(ellipse at 15% 110%, rgba(0,80,195,.35) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% -10%, rgba(0,41,143,.8) 0%, rgba(4,23,115,.6) 30%, transparent 65%),
+        radial-gradient(ellipse at 50% 50%, rgba(4,8,61,.9) 0%, rgba(1,11,35,1) 100%);
+      position: relative;
+    }
+
+    .hero__label {
+      font-size: .66rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: rgba(110,175,255,.7);
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 1.75rem;
+    }
+    .hero__label::before {
+      content: ''; display: block; width: 28px; height: 1px;
+      background: rgba(110,175,255,.5);
+    }
+
+    .hero__title {
+      font-size: clamp(3rem, 7vw, 7rem);
+      font-weight: 800; line-height: 1.0; letter-spacing: -.03em;
+      max-width: 16ch; margin-bottom: 1.5rem;
+    }
+    .hero__title .serif {
+      font-size: clamp(3.5rem, 8vw, 8rem);
+      color: rgba(110,175,255,.9);
+      line-height: .95;
+      display: block;
+    }
+
+    .hero__desc {
+      font-size: clamp(.95rem, 1.4vw, 1.1rem);
+      color: var(--fg-dim); max-width: 52ch; line-height: 1.7;
+      margin-bottom: 3rem;
+    }
+    .hero__desc strong { color: #fff; font-weight: 600; }
+
+    /* ─── STATS STRIP ───────────────────────────────── */
+    .stats-strip {
+      display: flex; flex-wrap: wrap; gap: 0;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 16px;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      background: rgba(255,255,255,.03);
+      max-width: 680px;
+    }
+
+    .stat {
+      flex: 1; min-width: 140px;
+      padding: 1.5rem 1.75rem;
+      border-right: 1px solid rgba(255,255,255,.08);
+      position: relative;
+    }
+    .stat:last-child { border-right: none; }
+
+    .stat__num {
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      font-weight: 800; letter-spacing: -.03em;
+      color: var(--white); line-height: 1;
+      margin-bottom: .35rem;
+    }
+    .stat__num span {
+      color: rgba(110,175,255,.85);
+    }
+
+    .stat__label {
+      font-size: .72rem; font-weight: 600; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--fg-dim);
+    }
+
+    /* ─── SECTIONS ──────────────────────────────────── */
+    .section {
+      padding: clamp(4rem,8vh,6rem) var(--pad-x);
+      border-top: 1px solid var(--border);
+    }
+    .section--alt { background: rgba(255,255,255,.015); }
+
+    .sec-eyebrow {
+      font-size: .67rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: rgba(110,175,255,.75);
+      margin-bottom: 1.1rem;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sec-eyebrow::before {
+      content: ''; display: block; width: 20px; height: 1px;
+      background: rgba(110,175,255,.4);
+    }
+
+    .sec-title {
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 800; line-height: 1.05; letter-spacing: -.025em;
+      margin-bottom: 1rem;
+    }
+
+    .sec-body {
+      font-size: clamp(.9rem, 1.3vw, 1.05rem);
+      color: var(--fg-dim); line-height: 1.7; max-width: 60ch;
+    }
+
+    /* ─── TWO COL GRID ──────────────────────────────── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+    @media (max-width: 860px) {
+      .two-col { grid-template-columns: 1fr; }
+    }
+
+    .two-col .col-text { }
+
+    /* ─── INSIGHT CARD ──────────────────────────────── */
+    .insight-card {
+      background: linear-gradient(135deg, rgba(0,80,195,.18) 0%, rgba(0,41,143,.12) 100%);
+      border: 1px solid rgba(0,80,195,.3);
+      border-radius: 20px;
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .insight-card::before {
+      content: '"';
+      position: absolute;
+      top: -1rem; left: 1.5rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 8rem; font-weight: 300; font-style: italic;
+      color: rgba(0,80,195,.25); line-height: 1;
+      pointer-events: none;
+    }
+
+    .insight-card__text {
+      font-size: clamp(1rem, 1.6vw, 1.25rem);
+      line-height: 1.65; color: rgba(255,255,255,.85);
+      margin-bottom: 1.5rem;
+      position: relative; z-index: 1;
+    }
+    .insight-card__text strong { color: rgba(110,175,255,.95); font-weight: 600; }
+
+    .insight-card__label {
+      font-size: .7rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: rgba(110,175,255,.55);
+    }
+
+    /* ─── PULL QUOTE ────────────────────────────────── */
+    .pull-quote-section {
+      padding: clamp(4rem,8vh,6rem) var(--pad-x);
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .pull-quote {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2rem, 4.5vw, 4rem);
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.25;
+      letter-spacing: -.01em;
+      color: rgba(255,255,255,.9);
+      max-width: 22ch;
+      margin: 0 auto 1.5rem;
+    }
+    .pull-quote strong {
+      color: rgba(110,175,255,.95);
+      font-weight: 400;
+    }
+
+    .pull-quote__sub {
+      font-size: .85rem; font-weight: 500; color: var(--fg-dim);
+      letter-spacing: .04em;
+    }
+
+    /* ─── GOAL CARDS 2×2 ────────────────────────────── */
+    .goal-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      margin-top: 2.5rem;
+    }
+    @media (max-width: 640px) {
+      .goal-grid { grid-template-columns: 1fr; }
+    }
+
+    .goal-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: border-color .2s, background .2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .goal-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue), transparent);
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .goal-card:hover { background: rgba(0,80,195,.08); border-color: rgba(0,80,195,.3); }
+    .goal-card:hover::after { opacity: 1; }
+
+    .goal-card__icon {
+      font-size: 1.75rem; margin-bottom: 1rem; display: block;
+    }
+
+    .goal-card__title {
+      font-size: 1.05rem; font-weight: 700; letter-spacing: -.01em;
+      margin-bottom: .5rem;
+    }
+
+    .goal-card__desc {
+      font-size: .9rem; color: var(--fg-dim); line-height: 1.6;
+    }
+
+    /* ─── ROLE PILLS ────────────────────────────────── */
+    .role-pills {
+      display: flex; flex-wrap: wrap; gap: .75rem;
+      margin-top: 1.75rem 0 2rem;
+    }
+
+    .role-pill {
+      font-size: .8rem; font-weight: 600;
+      padding: .55rem 1.1rem;
+      border-radius: 100px;
+      background: rgba(0,80,195,.15);
+      border: 1px solid rgba(0,80,195,.35);
+      color: rgba(110,175,255,.9);
+      letter-spacing: .02em;
+    }
+
+    /* ─── FORMAT SPECS ──────────────────────────────── */
+    .format-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-top: 2.5rem;
+    }
+    @media (max-width: 860px) {
+      .format-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .format-card {
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 14px;
+      padding: 1.5rem 1.25rem;
+      text-align: center;
+    }
+
+    .format-card__icon {
+      font-size: 1.5rem; margin-bottom: .75rem; display: block;
+    }
+
+    .format-card__value {
+      font-size: 1.4rem; font-weight: 800; letter-spacing: -.02em;
+      color: #fff; margin-bottom: .3rem;
+    }
+
+    .format-card__key {
+      font-size: .7rem; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--fg-dim);
+    }
+
+    /* ─── AGENDA TIMELINE ───────────────────────────── */
+    .agenda {
+      margin-top: 3rem;
+    }
+
+    .agenda__title {
+      font-size: .75rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: rgba(110,175,255,.6);
+      margin-bottom: 1.25rem;
+    }
+
+    .agenda-flow {
+      display: flex; flex-wrap: wrap; gap: 0;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px; overflow: hidden;
+    }
+
+    .agenda-step {
+      flex: 1; min-width: 160px;
+      padding: 1.35rem 1.5rem;
+      border-right: 1px solid rgba(255,255,255,.06);
+      position: relative;
+    }
+    .agenda-step:last-child { border-right: none; }
+    .agenda-step::after {
+      content: '→';
+      position: absolute; right: -10px; top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255,255,255,.15); font-size: .75rem;
+      z-index: 1;
+    }
+    .agenda-step:last-child::after { display: none; }
+
+    .agenda-step__time {
+      font-size: .72rem; font-weight: 700; letter-spacing: .06em;
+      text-transform: uppercase;
+      color: rgba(110,175,255,.7);
+      margin-bottom: .45rem;
+    }
+
+    .agenda-step__label {
+      font-size: .9rem; font-weight: 600; color: #fff;
+      margin-bottom: .3rem; line-height: 1.3;
+    }
+
+    .agenda-step__note {
+      font-size: .78rem; color: var(--fg-dim); line-height: 1.5;
+    }
+
+    /* ─── RESPONSIBILITIES TABLE ────────────────────── */
+    .resp-table-wrap {
+      overflow-x: auto;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      margin-top: 2.5rem;
+    }
+
+    .resp-table {
+      width: 100%;
+      min-width: 780px;
+      border-collapse: collapse;
+    }
+
+    .resp-table thead tr th {
+      padding: 1rem 1.25rem;
+      background: rgba(0,80,195,.08);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      font-size: .65rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: rgba(255,255,255,.45);
+      text-align: left; vertical-align: middle;
+    }
+    .resp-table thead tr th:first-child { min-width: 160px; }
+    .resp-table thead tr th:not(:first-child) {
+      text-align: center; min-width: 140px;
+    }
+
+    .resp-table tbody tr {
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .resp-table tbody tr:last-child { border-bottom: none; }
+    .resp-table tbody tr:hover td { background: rgba(255,255,255,.02); }
+
+    .resp-table td {
+      padding: 1.1rem 1.25rem;
+      font-size: .9rem; color: rgba(255,255,255,.75);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+
+    .resp-table td:first-child {
+      font-weight: 700; color: #fff; font-size: .9rem;
+    }
+
+    .resp-table td:not(:first-child) {
+      text-align: center; vertical-align: middle;
+      font-size: .88rem;
+    }
+
+    .owner-badge {
+      display: inline-block;
+      font-size: .7rem; font-weight: 700; letter-spacing: .05em;
+      padding: .3rem .75rem; border-radius: 100px;
+    }
+    .owner-badge--agency {
+      background: rgba(0,80,195,.2);
+      border: 1px solid rgba(0,80,195,.4);
+      color: rgba(110,175,255,.9);
+    }
+    .owner-badge--tn {
+      background: rgba(232,168,32,.12);
+      border: 1px solid rgba(232,168,32,.3);
+      color: rgba(232,168,32,.9);
+    }
+    .owner-badge--shared {
+      background: rgba(139,111,240,.12);
+      border: 1px solid rgba(139,111,240,.3);
+      color: rgba(139,111,240,.9);
+    }
+    .owner-badge--none {
+      color: rgba(255,255,255,.2); font-size: .9rem;
+    }
+
+    .td-note {
+      font-size: .78rem; color: var(--fg-dim); margin-top: .3rem;
+      display: block;
+    }
+
+    /* ─── CTA BLOCK ─────────────────────────────────── */
+    .cta-section {
+      padding: clamp(5rem,10vh,8rem) var(--pad-x);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      background: radial-gradient(ellipse at 50% 100%, rgba(0,80,195,.18) 0%, transparent 65%);
+    }
+
+    .cta__eyebrow {
+      font-size: .67rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: rgba(110,175,255,.65);
+      margin-bottom: 1.25rem;
+    }
+
+    .cta__title {
+      font-size: clamp(2.5rem, 5vw, 5rem);
+      font-weight: 800; line-height: 1; letter-spacing: -.03em;
+      margin-bottom: 1.25rem;
+    }
+    .cta__title .serif {
+      color: rgba(110,175,255,.9);
+      font-size: clamp(3rem, 6vw, 6rem);
+      display: block; margin-bottom: .25rem;
+    }
+
+    .cta__sub {
+      font-size: clamp(.9rem, 1.3vw, 1.05rem);
+      color: var(--fg-dim); max-width: 46ch; margin: 0 auto 2.5rem;
+      line-height: 1.65;
+    }
+
+    .cta__buttons {
+      display: flex; flex-wrap: wrap; gap: 1rem;
+      justify-content: center;
+    }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: inherit; font-size: .9rem; font-weight: 700;
+      padding: .85rem 2rem; border-radius: 12px;
+      cursor: pointer; text-decoration: none;
+      transition: all .2s var(--ease);
+      letter-spacing: .01em;
+    }
+
+    .btn--primary {
+      background: var(--blue); color: #fff;
+      border: 1.5px solid transparent;
+    }
+    .btn--primary:hover { background: #1060d8; transform: translateY(-1px); }
+
+    .btn--outline {
+      background: transparent; color: rgba(255,255,255,.7);
+      border: 1.5px solid rgba(255,255,255,.15);
+    }
+    .btn--outline:hover { color: #fff; border-color: rgba(255,255,255,.35); background: rgba(255,255,255,.04); }
+
+    .btn--sm {
+      font-size: .8rem; padding: .65rem 1.4rem; border-radius: 10px;
+    }
+
+    /* ─── FOOTER ────────────────────────────────────── */
+    .footer {
+      padding: 2rem var(--pad-x);
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; flex-wrap: wrap;
+    }
+
+    .footer__left {
+      font-size: .78rem; color: var(--fg-subtle);
+    }
+
+    .footer__right {
+      font-size: .78rem; color: var(--fg-subtle);
+      text-align: right;
+    }
+
+    /* ─── DIVIDER ────────────────────────────────────── */
+    .sec-divider {
+      width: 40px; height: 2px;
+      background: linear-gradient(90deg, var(--blue), transparent);
+      border-radius: 2px;
+      margin: 1.5rem 0 2rem;
+    }
+
+    /* ─── ELEGIBILITY NOTICE ─────────────────────────── */
+    .eligibility-notice {
+      display: inline-flex; align-items: center; gap: .6rem;
+      background: rgba(232,168,32,.08);
+      border: 1px solid rgba(232,168,32,.25);
+      border-radius: 10px;
+      padding: .65rem 1.1rem;
+      font-size: .82rem; color: rgba(232,168,32,.85);
+      font-weight: 500; margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <a class="logo" href="partner-value-prop.html">
+    <img class="logo__img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYMAAAAsCAYAAACHWdSdAAAd+ElEQVR4nO1daZhdVbFd63Z35oSEGWQGEUEEAQEnEHFARA0gCogyKQqCIqICPgVFEZwHBJEIolEcmXkSMSKzQAREZTJMkgRDgIQECEl37/V+VFWf3afPvX076RDee2d93/3OvXusXXuo2rXr7AvUqFGjRo0aNWrUqFGjRo0aNWrUqFGjRo0aNWrUqFGjRo0aNWrUqFGjBgBwZVUsiU3qF0m90PTUqFGjxv9nvKDCQFIDQANAb6sFv910NWrUqFFjePCCCAPfBTRI9ma/15C0GslxAEYAeA7AswDmkZyf5e2IfCuAJtTCpkaNGjWGQRhk5p7c7CMAiaRcywfJJGkDAAcB2APAtgC6YDuABoBeK06LSd4I4GcALie5WFJHlLe89DrNDafnRSkQnK6O+LkihOFwokRvIplWJj01atR4ASGp4Yt0qzQdAJBSmiDpiyml+TIktUaSpJTSw5IOyOprW3hJoqQO/zQq4kdL6hpqu2vUqFHj/yKGvDOoMPl0AXg5gG0AjASQJN1N8i6Sz0l6NYCpADaH7Rjo+RaQvAPAXADPSBpFcnsAm8F2DMjS/wLAUSSfDq1+WRqb7QjeB+AHAGYCOIDkQ8tT7nBBEn03tSaAvWDms4dJXrUy6WqGjN71AbwN1m/3krwm4lYyiTVq1FgRCG3bv28u6TRJ96WUeio0+0clnSfpMQ/r9ee1kg6UtEZF+Z2StpR0iqRHPP0Sf/7FF8k4YB6M1rGS3iJpT0k7xa7C67gzo/XLET683Bo6ol2SXpvx9I8rm65myMbCuzN+/tLDBu2jGssHn48rzSOwGV6sdNUYJngHx2J1lKRns4W/FUIIzJN0YJNy+0w52aI9MaX0M8/7vD+nSxqRp6soL8rZQtLiTJD0mZmyciVpf0/fUSqH+WeIfGo7Xyl9mNV2ViEEfz8c9SxvviZlhTB4hwrT3lQPa6xs+oZQX6ONT4zLfr9rrFy06L9O/9T91Cba0oZVmAM6JZ0L4DBJvW5WaQB4BsD9ABYAmAhgUwCrePZeT/MYgKu9vC4APSTjnYLcyygWxacbjcYHJN0J4BsAlgJ4E4AvAjgRZj5q1wwhZO8vkDwWwN8APELyNx6W09CBklur06RmpiSVzGcRpibeUFX1SAr66DxD9uxXD0oH6sNN3xDR5zxAMuhlTksIjmZ1uRBnFX0YRueBAYRbuW2XvbJNiTkkdcnMmz0vFicDH2dh5u1d0XS16L987K0QE3CsV07Hi2ZcLCuGaho5B8ChAJaQHCnpYZI/APArko9mC9VEAG8B8GkA2wHoBrC1pEtSSm8iuaRKYmcdm1y6d5D8pguPr8I6+PiU0qUk/zJIJyeZFAOyweKC7UmYgOmHoIlkj6SOlNJYH8yLSfaGFlJVZwg1X7zGwITdYg9rlBbGvJ5GSmm817PU2xh0lulrIPMukjQa1oeLSfZEmjboG+319LVrGBfbPo8ySaNg50hLnReV9OVhKaWRAEaSXAobZ70+FobV6yvqlLQjgE/AeE8Ajax/emGKykTYudWdAE71Ir5B8vYVtdC0oJsk5Xy6Eja/vgXgy8Mk2JeVruDDJgAuBrA6gOMA/HJF0BVlSnovgANhimiOpwHcA+AyknNWRD8NVZH4X4/MFPBBN1uE+eKSlNIEj2MpT2ypOyR9rZTv6x7Xjt0/P6OYpgKXleuN8mRnGZdLuj7s7imlJ2UmpnM8zfEy09GfJL3Owzr9uZakEyTd4N5Pj6aUbpX0Q0lbeJoufx4g6WZJV0l6naSjU0p3SHpcdmZypaRdSvQFb9Z0Oq6TtEDSHK/nOElvU2Eau6qUb7SkY7w9D6aU5kr6u6QfZfRFW/aSdF1K6RpJu3sfzkgpzU0pzZb0B0lvz9uUUtrH89wo6aCsH6MfDve4P0ua7GHvzvrmJ5JeL+liSf+StCCl9JCkcyW9sUW/vVrSmZLudX78y/vn05LGV42z5UHGoxjXYc4so9ufp3m7AvsGb7IyBzVxleNapa3Kl/FrtPNVkr43nLRUpW+jnKBrSxXm2Y95WNcytLNl+qz/TvO6lpb6LczXT0jaw9MO2GUPhUfltCml9STtKGkrVXhWtsvb5aGp6vdQ6msbGRMmSXogY/TVKhbELpXsw/7pzAbI6ZLki3O3pO09vB2BEIvQTiombLek7fIysudO2UCIZ+R7wNNckLVlv6yuV0h6sJQ3/z4v6vX0J3v4s5L+of4LSuRZKmmv4FVWz8yKeuR8eljFmcy0rL61ZMIjb1NexiJJb8jSH+Ph3U7fEvVH5Ds48qSUPpvFn5z1cUy+M7L44zxschY2S9LCcpuyuqLMhoo+O1LFopvzI9p4lWwXNGwCIat7R0k/lwmxKZLu9zoXppSmethFkib7Wc4i/4QQjfHZUaatKiyL61tA8/RN0vVb5P05TiYwJem7eX3LQEu/M5C8b9pFpE8pvVzF2D3S4zrzdM3KHgrd2Xg81etaJOk3MqeV82VKWpxjzZb0Ek/fdz6ngQtqU1f5PH3W59/yumc2G5/N+rlJuqr+H6zfqgRc+fyzaRltI2P4x7IJ+oSkTaKSQfLnUvWGrIzvtJM/L8efl0QBKaUvlGjs00xcO79fxWLyjKT7JF3iac7LytnHw9aWaaWBm1NKx6aUPinpliz8bkmre56TPCw0oad9QF4paUnmETRT0jjPM0nSPV53j0xYTHeaZmR0Rd5cGPwho+MRSd+RLc73Zfn+Jmmsp/+oBy/xuOckXSpb3J4N/vjuYl3Pc1wFj3Nh8NWMhqM9LIRBUjEBn5T0W9lC+6jHx4J/aNamvTws+upKmYPCSSoWO0k6M+/n4YaK8fNTr29Wxsd8pzvOP50VeSlpjMyTrSMLazoRU0ojJY3P02fl5hp31D3Gf49WoaDFzqBPAfPfozzPgLIr2k+ne0weNlT+uTCI+fDRjNbxMrNhZdlD5WE2Hr/idS2UuTjnZX05Bk9K6ZMe1lVR15g8bJB2hgPLuj7XJJuLLZUVSSOcB51V6UpjbOwQaeos97HXN87NiYOOw0ERmVNK/51Nyq8GAW2WEY0/KCvjPg3iFdSkjI9kZVxRlT9jylbZoLzZmRN1DtgZqP8i95soO2PuZVn8Cc6XL8RYk+0adsjoeLv6b13f7OH/5b97ZeaQPT08Ov54j4+Fc1rEp5Q+7Ly7R754e9wkFQJhqaTXeHgI8SRb/N+U5XmtTHgFDvTwT2dhVTuD07P4j3vYZKkQYC6MN8rqGi8TkvL4h1SYfu7Myjuj1IeTvCzJ+nKrnFfDAanPGyXad6HTODujMXZ0O0ia7ma34HHk20O2Y/5PSukpXyhOl7RaVtdoSRenlG51c9x/ycyQcyX9VcULlv22+JIOlpv3ZK7aF3t90effK9HyTpni9IhMeZvh/To2K3MPr/PXst3RFV7+LJkQ3yyjez9Jt/s6sHbQ6M/veVtP899bqjBxnuTK1H2S5vmOd0pKab28H7NnSx6qv6AsC4NFQXPWX+NUuLafm/F2lKSjUkrXeJv/I1PI3utpYvwdJ1P+viRpb5lbfCiJc2PQupI1XbZrD7Pwj2W78YNk69aDMvPx31XsmHJLSkOmBN2WUnrSy7/Jw/Jd9A4yxfpKSW+Sma8fVTEXN5CZZGeqv4l2/TIPhzRJgqFZw5PcDKGKCali+1XlKrq6D0zJFqbNmpVTUW5uV45FcqZc0ygNkr6zA+8kOVPzyZULg8kedp93bI9sMm0oaVtJr5L0Eu+UwHQASCl9Lgv7tpfTpWIw/S6Lj8X27izscA/rLHX4lCzNtLyNXv4qXv9I5+umsklUbtPREZBS+pmHdaiYSOdkeY73sM9kYUMSBo5nVJxd5GcN42WTI7CXpK0z+uZL2l7SSyVtI2k7mVnsjCzNscGvwcbMUJHx/hde12wVO4No+9szWvbJ8sYOzKNSjwpz120q3o9ZRYUAflzVpr4YE8G3c0rxgcXOa0n6fkbL6RXpo57fqVDwPuxhz6pYMJOK3eLD8jmamQ4XyYW8igXsJo+70sO3VKEELWpCx6OStinxdjAerhH1lvLlO4ONSrxbP6X0lMf/MOuDq0r05N9PzHg5xYmZrYLX82SLa/CrX/6U0vs9bwjqOSqEY17PKaVxF9aKaHtvVv55GU17ethipyt24rGLn+G/e7JypEyBVBOB0NZCTDK2d4sA3B1R5bTuKtrrn/LJ/XwA//bvY2Dup0B7b0FHXY8CeN6/rwlgbIs8jcwdh9mnjB7ZpN/A20AAFwF40Bl7m9P9XRSePi/1tHkb52bfo55ZfQ3wbTiAjT1oIYBL/XvupgsAl1XQGWVOBPAxSZeQvFnS/TC33jfD+aQKAUtyTokXgLn7Btq9mmOw/rqJ5L0+bnrd42MEyUUw75fAy/wDmOvoBEm3ALhXprHeCmCOpE/BvNFAcl2sXPR5xETfy3aDX/fgSwBs7XR+HOZyvQOAeLFRkmL8rgHgxwDeDeArWfgJksY6304EcISH3wbgcNnB9VkyAR3zMhaUuPsLAK4A8FYAO8Pu+QKAfWBvtudjdwxs3HwCwH4ArvL4DQEc6d+j3b3oP+8F7xsAPRX8GgfgLklHON1nSloMYD0AF8ouquyRncO1xUM0H38EMN7NImMkrQPz+Jrk8Tf6cxfY2/IAcCaA1zmfbvKwT8nPF6KtJNeV9BSAjwA4AMC5AA4B8CdP9wSAYwB8lGSUs8Sf68Dm894yi8J8AJD0CUkbukfboTAvTQA4A8BGsHXiTA87VJlp1fN3OY++BeA9JM+VHZRv73QfSXJ1AO8B8BCALWAenkCTdb9dDSsWmV53+esfWbjp7QLgQ/77zySnRBof3CcB2BA2qO71qKG4ez0DY/I4mI/+eABPovqdg/KgbeYCJgCjUFy0Fu6FuTuq3H8+wYTMkixvszKjLPtiE2pMVk+3pDIvgxfzndcdKAZkkvRWAD+BDTChT3ahB8bTVgv6YIv4cLnIxY2zZf5D0rOZu+x4GD8QvCbtZZa+TMZ3omjbi8mXOxryIdh4nA3gaJKzJXWSPFPStvAFXNLnJC3MFJTLSB7haS+TNBLA8QDWk231HwJwlKf9O4C3k3xK5lJ5kaQnAXze44MvsyXtTHJPAFNJPgcAkp6ALQpjAWwN4HKfo9GWz5KMneMfAdwKYHMVThq9nrbqjK/qfZjow4cA7NloNOZ4Oy+S9G+YW/fLYS6h34ctsi15CGBfSaeQfKyk2cb3kQBu9HkiV2BHetx1AC4EAJKXy67I2YLkVOdnb0ppTZKvB7Cq0zY7a5NIHk7yatmugyRvlZktd4cpdudn7tOdTgMAzIAJ6J5Go5Fc6H+H5EQAWwF4BMDRXs9VJE/0YS9Jn5W0K8lXSvoggPPhComvDeeSPN4FQ7evv/D4Z0kuAHCxpFkARpO8zsuudPMd0nab5EiYZrqoFBUL5SYAPuBMGAdgSin/gDt2hug7Pgp2Xw+8vmf9+2BltFoIGzAf5SWwBWcxgLeQfArGn9DYe2C7kgmeFj6Q4N9b0uBp58M0qS7YYvgS2EDqlNTj9S0FsJl3NuATMKX0cgC/hr3MlwD80T8PwfzfTwew7yB8GEDWIPEsPQfNL3Pt7YS959EvP8lNsnRPk5zn4R2wFxI/QnI8Ci2zA3a1OWB8j53Wi+EFq3iv4zU+BlYBcG1KqdN3AL0wmkFyVQCvaDQa12TD5E5/joIpOf/w3yNJdgF4JUyDBoCfuCAYBWt7r6Qfkfy419unfDQajVkyd+TDfDHfWtJmJGPelBf0bgD/BMzsSLv/634Am2cWgRztnPGF8JjqPv5BNwBMkXSca9s7Afi+pB0H4yGA1WCL52NobtEYDwDZnFxA8ncATvIdSLynE44aJwLYVmau3Mj5SBRrTJTzb5I3+njOd9ZxONsg2RlKscfF8x6SS2UHzIvhvHZ0SFrV2wUAr5aZvztTSoBZDFb3uG38me/AYmfSAevHa2BWjA1kjhDHAZgOE1S3hZBpwrvBhYFLu9mwjhoDYEeYuSaunQaKwfiwE9spaWOZeWBpJuk6UDByKH9cE5r/S1GYhuZioFBqhlZ/pNPVaDR6Jd0O20KOAbAJyZtCawDs5lWS65G8S+3fdtpXL8kuH5B3wLamI0geCdsKh7Rf6mUflpURV4BPRvFW969IHpjtyDpRmFyWCZkwezoLfoU/e7K2vCKLf7JUTCK5raR3NRqNi1S8Fb3Utag+OzvJv0p6kPayXCeAV0rqbjQad4UQ8TGzKYDnSD6Qhy9PW4cJsZuJBXMEgA0y2ghXWLyfeppotDG5Uxbei/4m0Cf82R3pSD4NG/+rZOl6ZYfJx6BY2ECyG60Ff4yxKlNPK1TtyPu2qxndsXMF7EXC+QDWJTnOF+jQ4JvyEAVfyoi03TCz1mwAI1zZuIfk41LxsqjMa/AXAHbDQB6Vy4w+fg7FlfxxowLQf6daZRrPTbZRfs6vBBN2sZ6MBzAhb7+kHpo1ZmFF20NR6vb2PS5pbwBnkdwJ9kLidgA+I+k7JD9ZUUYfmp4ZxOLtTLoua9zeFcmDCXcHgSS38IkMFAzvpb063zPECR10vj77fhfJ5weTdoMh08DjEE6SvivpQzLviy5J65KcCuCfMi+ml3neoZzMRz2xW+oGcIzsRbgtAKwqewHuSlg7yxNzdPY9Bkbw4gTYIr3MZpRsIN+Awt65r+xgeYzsAPhEAOH9tMDToqLeKTJPjHUArClpf+fbeI+/FcCNrsX+0sPWInmpzEtnFExreqOkawDcJ+lr8EmjZfGIGH4E7+cCgKS/wXbDqwFYR+Z+PJbkOJKrkbwepmgMtqsRTDg+hmIB2TyrMxaOjVR4KoVSdyhMEABmez8ENpZ2gGmlrepsimxsNLK6GrB5PbqcPlMsQkFhlm8tFTb5x73sJzxfUx562LVOTxUPeyRNc+vD5Y1G41pfHIPOwKkAdpOdXZwpe7Fyc5i5r+l5RNamfuFOj7zZuVk4vg8wGWfoBDAHhYXjHN/BreOfSd72MSRDCct3dnl90Ud3ktwZwBu8rbETOVZN7mELtOuid4k/RfL9KaVdaWcAXU5ISNDHAdzsaUeg0ASXyxUw2+K9JwuOg5pm7yq0OtyKwZRQHE7+FsDZ9pUTYfa4+yXNgG3p3+l5dsJAba7Z3ST5oI08FwD4LYAu1zKOAHA7gAdg27y3lPJGG2ZkdR4u6UIAn5d5Np3qZUVbylvV8veqsNid/BNAuCr2AvgagFkk/w076Ay6vu1hOa09biKYBOCbJO+FHW7/gnYgCZhJ5PiY0CRPQDFgXwWb8P8AcAfMhroeTIhs6RrSi2JnoMKj6XoAoF2/vi/JZ2D3ai2E9dOn0f88atCiYaaie2FXrAPARyRt54pZ7DA+T7K8EMcLh/MkHULyAtofRW2D/juIoWKeP8fIveK8/16DYqeYL0zR3g9Ker3THWPkZJ9fgPMOrlQMwsPOJnMskDu6dMo9Gj2PfFcwAsBrva6bSH6c5IUk/wWb1+0i2hqHwRNhyky/8642yunyMR1zez9JW9FM1PNhAvwU2MF+KGj5GOonaGTurw9IOonkDSRP9nb9y9Pt2IqYwcxEsSWdJukGmJYBkudJ2p3kw5nph97pv4Wf1pM8TNJZJOcvqwYvO0jqgXlBRGOeg91/0kdjRb4Omu0VMI0szjXg5it4WNj9OmEHOc8DiO3UWiTXQsH0GQDeT/J+/53bFqs8m3L+xlaYMI1tEclDsriITzCB8S4PC4F7mWvR+3u6/VFsc2eQnAVgssfFpOh7gQitD//60rqAPwHAOJoZSygWEvlE/2aj0fhS1jfBhxEkL4WdhezgZYYpgbK7rA4neX1sn2mHhe+AHfC9xnnWd7bgOAveJ8u7E2wDPU5XlclEKJwI4szgbJL7w2ieIntv5XbfFR8A68PNYAt6Iyu3n3YrKfmYXIpi3JwKuxNpdQDTZNewzIMdWu4AWyBGopgDsWOcQPKTMnfPN0r6nNfbKSnmdOSpMiEFjUudtutILoSZNL4g6ZUAHpN0EIuziJhb8roaAMbJroa5FMB/JO2KYtG9BsDP/fuZAN43BB4OUGIkdWc7hkqTDc1c+ZT/3ErSBwDM9N3BUc6LzowffUpOqaiIv93LnSR79+MvsPOdW0IYVOxi5OV1oljYzwCwK4C1ZVewXAFTDneFeToBZjo+H8U61sjoiHm8C8mNYH20PszKsDGAtT1+drCizBtgEGFA/9tKZ+xnJE2nHSJvAmC6pANop+p54RfAFtVtPN3JAI6FbfuH9Af3vqD3yHyMv5pFTaXZkKsun8p3KV+BLUgPoL8W/zvYuUe3pLs8OCbJcTKb4l6SNqUdaM6BaS8X0UxTsQhOhy28gh3mAv0n+e9hgqsHZhoJLA5BCVv0N3M6H4YJ01tgGvVEFAeLgHkl/BS26K8N69TbYO5lr4Jpks/5dhsw895pMEEwPW+n41qY5t+L4jAqNKmjfPGJukY5fb8m+Sfv8yjrn7DbZMfC3OhmwCbX9t6uOQBuIXkRyUV5v/ni/khKaTcA7yD5Bpibby/scPxS2vlNCI8VvSsI5WA8BgrQESgm3ggAcFPXuwD8BuaFMhnA3igE9Z/gbpG0CTXGF/1+cy/T8vvqIHmhpAkwt+bVUbgfEub63EVy/Yym8wC8H2ZSOdk/pHnggOTETHvO6yuvA5FmlI/1WSml00ieTiN+H6fhKdiY2CT4QbJD0khPdwfJrQAc7OUlz3c1zNEk+RyfMxgPJcUFgeX+j9tw4y90B4CFybtX0g9pXkNrweZS4CGYaaYLmXLjz7EsbuPtW+BpnkkXADjY27ktbEd7C8zclZcR6ELB71D0pvmO6xySa8L6OTcznQUgzKkdWTtzBRIAPgtTxPaDWRw+ikJw3AobH0ATU2VbtlcVhy8HAfiZL+p0LeAySVNp/1q2yBv4ZZgkC8+ZY2huYp1o8z9yY8GVeSJcikJC/gfAziQfGW4t0Rc4NqNvsPjhrKeqXa3Ch4OuIdAXXhlVtDSNi/hyue3kaRU/HFDh5LAvTHudC+D7rk3G+N8UwAdhk2sqyftUuCZOILk3bPe8DkwL+wPsf7xDwx4BcxhYB8AVtH+Ei3G+DUw7XiLpxy5kYgHbQtK+JF8FW0huAnC+pLeSfDWAaSR/73VsCVt8t4LtHG6DLSRv9rCLaS6G28POhJ4nea4LjODBgbCDx7tpVoAIfxdsR7oqbPE8Gya4dwdwqwuvNSQdSbITtvhs7DxbE8Ajkv5I8gr2dyxpkEzt8DDrr+iT3WH/qT4fwNlsYYXI6tsdtmBuBHOCuBrAtZIOdGF5AcmZ3t5dYALv7AotP8bmu2FOIWvCzKd3SDoKwCaSbnJniqB3Y5hloANmPr07GwMbwkzh28F2YfcDuIS+k24xBnOHiy5J7yX5TgCTYA4hf4F5FDXlzZCg4q2+Q1RceJa/gbdY9nblEtlbb92SurM7duJt1XhLuVMDL7eLP6WIl2gmyl67loq3+A7O6WlBL50xfW/P5m3J4qrepO6jI6e3SbpW5SxLPR0l2qsuncovLgs+DqClDfraob/fBV1VfC+X4/R0lr63/KORcrrsd1v3V61MRDubxC3XnTBV/dIi7Qo7WB/Osqv4tSJ5WC5rOMoZ7vJa9XMr3pRpeSF4GAWGQNhBdk+H1N6f28cVEr9UccndYAvDZBU3SIYg+K7HL9eBdI0azaBCgFcJ/1xINyrickWmmQLRKbsnq5w/F6hVC2WfMM0EbZTVUU5bpsmfzRSFcn2VPFD/a2Y6vIyOnIYyjyryNDVNt8vDdvnWIk9+TUpH1pZ+5bQaC6XyQonJ/xEv+F1W5lqNoXI/D1C+WuXP4nOe9ytzWJExsSFpL/8LyXv8bpkFst3BTNkFWIepuIkz7itZKLvzYy9JG6aUJqSUJkhaVXYnzRGSrve0scOQ/P4VDbeEq1GjRo0ay4Zc8vjvLknjY2H3C9RCuq0m2xFIpV2EXyT3dPbJb/mMtAskfcjLqv97tkaNGjVebCgLhVJc2f6/h/+T1wChUELELZTdLrpZVlctCGrUqFFjBWCFHcrEibUyzxSZ7W032HsIu8HevI37f5bKXiG/F+ZT/Sv3qCAq/gC+Ro0aNWoMH14wTVt21pAyIdGA+fquBnu55QmYT/6SUppmb/fWqFGjRo1hwgtudnGh0Ox+kdhJhOCohUCNGjVqvABYaTb4MB/lQfGlNgfVqFGjRo0aNWrUqFGjRo0aNWrUqFGjRo0aNWrUqFGjRo0aNWrUqLES8D/nIzVCGGy6yAAAAABJRU5ErkJggg==" alt="Tiendanube">
+  </a>
+  <span class="header__badge">Partner Program</span>
+  <div class="header__spacer"></div>
+  <a class="back-link" href="partner-value-prop.html">Volver a la propuesta</a>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero__label">Iniciativa de Contenido · Programa de Agencias</div>
+
+  <h1 class="hero__title">
+    Convertí tu
+    <span class="serif">expertise</span>
+    en pipeline real
+  </h1>
+
+  <p class="hero__desc">
+    Webinars mensuales online donde tu agencia conecta con potenciales clientes, 
+    <strong>demuestra autoridad</strong> y genera oportunidades concretas de negocio 
+    — con respaldo institucional de Tiendanube.
+  </p>
+
+  <div class="stats-strip">
+    <div class="stat">
+      <div class="stat__num">50<span>–150</span></div>
+      <div class="stat__label">Inscriptos por edición</div>
+    </div>
+    <div class="stat">
+      <div class="stat__num"><span>×</span>1</div>
+      <div class="stat__label">Al mes</div>
+    </div>
+    <div class="stat">
+      <div class="stat__num">100<span>%</span></div>
+      <div class="stat__label">Online</div>
+    </div>
+    <div class="stat">
+      <div class="stat__num"><span>LATAM</span></div>
+      <div class="stat__label">Alcance regional</div>
+    </div>
+  </div>
+
+  <div class="eligibility-notice">
+    ⚠ Beneficio sujeto a elegibilidad por tier
+  </div>
+</section>
+
+<!-- SECTION 1: La iniciativa -->
+<section class="section">
+  <div class="two-col">
+    <div class="col-text">
+      <div class="sec-eyebrow">01 · La iniciativa</div>
+      <h2 class="sec-title">Un espacio para demostrar que pensás el negocio</h2>
+      <div class="sec-divider"></div>
+      <p class="sec-body">
+        Es un canal digital de captación donde tu agencia conecta con potenciales clientes, 
+        muestra su enfoque estratégico y genera oportunidades de negocio reales. 
+        No es solo un webinar de marca: es una herramienta de pipeline.
+      </p>
+      <p class="sec-body" style="margin-top:1rem;">
+        El webinar se produce bajo la marca de la agencia, con el respaldo institucional 
+        de Tiendanube como plataforma anfitriona y amplificadora. 
+        Vos elegís el tema, definís el speaker y liderás la conversación.
+      </p>
+    </div>
+    <div>
+      <div class="insight-card">
+        <p class="insight-card__text">
+          Las marcas hoy buscan agencias que no solo <strong>ejecuten</strong>, 
+          sino que las ayuden a <strong>pensar el negocio</strong>. 
+          El webinar es el espacio donde tu agencia demuestra eso — 
+          antes de que la conversación comercial empiece.
+        </p>
+        <div class="insight-card__label">La oportunidad</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: Pull quote -->
+<section class="pull-quote-section">
+  <p class="pull-quote">
+    "Quien educa, <strong>posiciona</strong>.<br>
+    Quien posiciona, <strong>cierra</strong>."
+  </p>
+  <p class="pull-quote__sub">El webinar como herramienta comercial</p>
+</section>
+
+<!-- SECTION 3: Lo que conseguís -->
+<section class="section section--alt">
+  <div class="sec-eyebrow">02 · Objetivos</div>
+  <h2 class="sec-title">Lo que conseguís con cada edición</h2>
+  <div class="sec-divider"></div>
+  <p class="sec-body">Cada webinar está diseñado para impactar en cuatro dimensiones de crecimiento comercial simultáneamente.</p>
+
+  <div class="goal-grid">
+    <div class="goal-card">
+      <span class="goal-card__icon">🎯</span>
+      <div class="goal-card__title">Captación de prospectos</div>
+      <div class="goal-card__desc">Cada inscripto es un lead calificado que voluntariamente levantó la mano para conocer tu agencia y su enfoque.</div>
+    </div>
+    <div class="goal-card">
+      <span class="goal-card__icon">⚡</span>
+      <div class="goal-card__title">Generación de SQLs</div>
+      <div class="goal-card__desc">Los asistentes que hacen preguntas, descargan materiales o solicitan seguimiento son oportunidades de venta activas.</div>
+    </div>
+    <div class="goal-card">
+      <span class="goal-card__icon">📈</span>
+      <div class="goal-card__title">Pipeline building</div>
+      <div class="goal-card__desc">Un webinar mensual genera un flujo constante de contactos en distintas etapas del funnel comercial de tu agencia.</div>
+    </div>
+    <div class="goal-card">
+      <span class="goal-card__icon">🏆</span>
+      <div class="goal-card__title">Authority building</div>
+      <div class="goal-card__desc">Posicionás tu agencia como referente de categoría. La reputación que construís en cada edición se acumula.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4: Audiencia -->
+<section class="section">
+  <div class="two-col">
+    <div class="col-text">
+      <div class="sec-eyebrow">03 · Audiencia objetivo</div>
+      <h2 class="sec-title">Hablás directo con quien decide</h2>
+      <div class="sec-divider"></div>
+      <p class="sec-body">
+        El programa está diseñado para llegar a los perfiles con mayor capacidad de decisión 
+        en empresas que ya están en e-commerce o están evaluando entrar.
+        No es awareness genérico: es conversación con el tomador de decisiones.
+      </p>
+      <p class="sec-body" style="margin-top:1rem;">
+        Tiendanube amplifica la convocatoria a su base de merchants y red de contactos, 
+        garantizando que los inscriptos sean el segmento correcto para tu propuesta de valor.
+      </p>
+    </div>
+    <div>
+      <div style="margin-top: 2rem;">
+        <div class="sec-eyebrow" style="margin-bottom:.75rem;">Perfiles que asisten</div>
+        <div class="role-pills" style="margin-top:.5rem;">
+          <span class="role-pill">Founders & CEOs</span>
+          <span class="role-pill">Directores de E-commerce</span>
+          <span class="role-pill">Marketing Managers</span>
+          <span class="role-pill">Heads of Growth</span>
+          <span class="role-pill">CMOs</span>
+          <span class="role-pill">Emprendedores digitales</span>
+        </div>
+        <p class="sec-body" style="margin-top:1.75rem; font-size:.88rem;">
+          Marcas con potencial de escala, con presupuesto para agencia 
+          y con desafíos reales de crecimiento digital.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5: Formato -->
+<section class="section section--alt">
+  <div class="sec-eyebrow">04 · Formato</div>
+  <h2 class="sec-title">Cómo está estructurado</h2>
+  <div class="sec-divider"></div>
+  <p class="sec-body">Cada edición sigue un formato probado, optimizado para retención y conversión.</p>
+
+  <div class="format-grid">
+    <div class="format-card">
+      <span class="format-card__icon">🌐</span>
+      <div class="format-card__value">Online</div>
+      <div class="format-card__key">Modalidad</div>
+    </div>
+    <div class="format-card">
+      <span class="format-card__icon">📅</span>
+      <div class="format-card__value">Mensual</div>
+      <div class="format-card__key">Frecuencia</div>
+    </div>
+    <div class="format-card">
+      <span class="format-card__icon">👥</span>
+      <div class="format-card__value">50–150</div>
+      <div class="format-card__key">Inscriptos</div>
+    </div>
+    <div class="format-card">
+      <span class="format-card__icon">⏱</span>
+      <div class="format-card__value">~60'</div>
+      <div class="format-card__key">Duración total</div>
+    </div>
+  </div>
+
+  <div class="agenda">
+    <div class="agenda__title">Agenda del evento</div>
+    <div class="agenda-flow">
+      <div class="agenda-step">
+        <div class="agenda-step__time">5 min</div>
+        <div class="agenda-step__label">Apertura institucional</div>
+        <div class="agenda-step__note">Bienvenida conjunta Tiendanube + Agencia</div>
+      </div>
+      <div class="agenda-step">
+        <div class="agenda-step__time">30–40 min</div>
+        <div class="agenda-step__label">Contenido principal</div>
+        <div class="agenda-step__note">La agencia presenta su expertise y casos</div>
+      </div>
+      <div class="agenda-step">
+        <div class="agenda-step__time">15 min</div>
+        <div class="agenda-step__label">Q&amp;A</div>
+        <div class="agenda-step__note">Preguntas del público en vivo</div>
+      </div>
+      <div class="agenda-step">
+        <div class="agenda-step__time">Cierre</div>
+        <div class="agenda-step__label">CTA comercial</div>
+        <div class="agenda-step__note">Próximos pasos y contacto</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 6: Responsabilidades -->
+<section class="section">
+  <div class="sec-eyebrow">05 · Responsabilidades</div>
+  <h2 class="sec-title">Quién hace qué</h2>
+  <div class="sec-divider"></div>
+  <p class="sec-body">El modelo es colaborativo: la agencia lidera el contenido, Tiendanube pone la plataforma y la audiencia.</p>
+
+  <div class="resp-table-wrap">
+    <table class="resp-table">
+      <thead>
+        <tr>
+          <th>Etapa</th>
+          <th>Agencia Partner</th>
+          <th>Tiendanube</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            Definición del webinar
+            <span class="td-note">Tema, fecha, speaker, objetivos</span>
+          </td>
+          <td>
+            <span class="owner-badge owner-badge--agency">Lidera</span>
+          </td>
+          <td>
+            <span class="owner-badge owner-badge--tn">Aprueba</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Assets y comunicación
+            <span class="td-note">Landing de registro, creatividades, copy</span>
+          </td>
+          <td>
+            <span class="owner-badge owner-badge--shared">Colabora</span>
+          </td>
+          <td>
+            <span class="owner-badge owner-badge--tn">Produce</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Convocatoria
+            <span class="td-note">Difusión, registro, recordatorios</span>
+          </td>
+          <td>
+            <span class="owner-badge owner-badge--agency">Difunde en su red</span>
+          </td>
+          <td>
+            <span class="owner-badge owner-badge--tn">Amplifica a base TN</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Día del evento
+            <span class="td-note">Moderación, presentación, Q&amp;A</span>
+          </td>
+          <td>
+            <span class="owner-badge owner-badge--agency">Lidera contenido</span>
+          </td>
+          <td>
+            <span class="owner-badge owner-badge--shared">Modera / Acompaña</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Post-evento
+            <span class="td-note">Grabación, leads, seguimiento</span>
+          </td>
+          <td>
+            <span class="owner-badge owner-badge--agency">Hace seguimiento</span>
+          </td>
+          <td>
+            <span class="owner-badge owner-badge--tn">Entrega base de leads</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-section">
+  <div class="cta__eyebrow">¿Listo para el siguiente paso?</div>
+  <h2 class="cta__title">
+    <span class="serif">¿Tu agencia califica?</span>
+    Hablemos.
+  </h2>
+  <p class="cta__sub">
+    Este beneficio está disponible para agencias Gold, Platinum, Titanium y Blue Titanium. 
+    Si ya sos Partner o querés serlo, coordinamos el primer webinar juntos.
+  </p>
+  <div class="cta__buttons">
+    <a href="partner-value-prop.html" class="btn btn--primary">Ver el programa completo</a>
+    <a href="partner-value-prop.html#contacto" class="btn btn--outline">Contactar al equipo</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer__left">
+    Tiendanube Partner Program · Iniciativa Webinars Online
+  </div>
+  <div class="footer__right">
+    Beneficio exclusivo para tiers Gold y superiores
+  </div>
+</footer>
+
+</body>
+</html>
